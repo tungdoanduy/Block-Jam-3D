@@ -18,7 +18,8 @@ public class Stage
     public Transform groundSlotContainer;
     public List<Slot> slots = new List<Slot>();
     public List<Column> groundSlots = new List<Column>();
-    public Transform mobContainer;
+    public Transform mobContainer,tunnelContainer;
+    public float cameraPosX;
 }
 
 public class LevelController : MonoBehaviour
@@ -34,13 +35,20 @@ public class LevelController : MonoBehaviour
     public ColorConfig ColorConfig => colorConfig;
 
     [SerializeField, Foldout("Spawn")] int col, row;
-    [SerializeField, Foldout("Spawn")] GameObject mobPrefab;
+    [SerializeField, Foldout("Spawn")] GameObject mobPrefab,tunnelPrefab;
     public Transform MobContainer => stages[currentStage].mobContainer;
     [Button]
     void SpawnMob()
     {
-        GameObject clone = Instantiate(mobPrefab, stages[setUpStage].groundSlots[col - 1].slots[row-1].transform.position + new Vector3(0,0.01f,0),Quaternion.identity, stages[setUpStage].mobContainer);
+        GameObject clone = Instantiate(mobPrefab, stages[setUpStage].groundSlots[col - 1].slots[row-1].transform.position,Quaternion.identity, stages[setUpStage].mobContainer);
         clone.GetComponent<Mob>().Pos = new Vector2Int(row-1,col-1);
+    }
+
+    [Button]
+    void SpawnTunnel()
+    {
+        GameObject clone = Instantiate(tunnelPrefab, stages[setUpStage].groundSlots[col - 1].slots[row - 1].transform.position, Quaternion.identity, stages[setUpStage].tunnelContainer);
+        clone.GetComponent<Tunnel>().Pos = new Vector2Int(row - 1, col - 1);
     }
 
     [Button]
@@ -77,7 +85,7 @@ public class LevelController : MonoBehaviour
     private void Start()
     {
         edgeZ = edge.position.z;
-        SetUpMob();
+        SetUpObject();
     }
 
     private void Update()
@@ -85,7 +93,7 @@ public class LevelController : MonoBehaviour
         Click();
     }
 
-    void SetUpMob()
+    void SetUpObject()
     {
         foreach(Stage stage in stages)
         {
@@ -93,6 +101,14 @@ public class LevelController : MonoBehaviour
             {
                 Mob temp = stage.mobContainer.GetChild(i).GetComponent<Mob>();
                 stage.groundSlots[temp.Pos.y].slots[temp.Pos.x].Mob = temp;
+            }
+            if (stage.tunnelContainer!=null)
+            {
+                for (int i = 0; i < stage.tunnelContainer.childCount; i++)
+                {
+                    Tunnel temp = stage.tunnelContainer.GetChild(i).GetComponent<Tunnel>();
+                    stage.groundSlots[temp.Pos.y].slots[temp.Pos.x].Tunnel = temp;
+                }
             }
         }
     }
@@ -141,7 +157,25 @@ public class LevelController : MonoBehaviour
     {
         List<Column> columns = stages[currentStage].groundSlots;
         if (mobPos.x > 0 && columns[mobPos.y].slots[mobPos.x - 1] != null)
-            columns[mobPos.y].slots[mobPos.x - 1].Mob?.Activate();
+        {
+            ColorType color = ColorType.NONE;
+            if (columns[mobPos.y].slots[mobPos.x - 1].Tunnel!=null && columns[mobPos.y].slots[mobPos.x - 1].Tunnel.GetMob(out color))
+            {
+                GameObject clone = Instantiate(mobPrefab, columns[mobPos.y].slots[mobPos.x - 1].transform.position, Quaternion.identity, stages[currentStage].mobContainer);
+                clone.GetComponent<Mob>().SetUpAfterSpawn(color);
+                clone.GetComponent<Mob>().Pos = mobPos;
+                clone.transform.localScale = Vector3.zero;
+                clone.GetComponent<BoxCollider>().enabled = false;
+                clone.transform.DOMove(columns[mobPos.y].slots[mobPos.x].transform.position, 0.15f).SetEase(Ease.OutFlash);
+                clone.transform.DOScale(0.2f, 0.25f).SetEase(Ease.OutFlash).OnComplete(() =>
+                {
+                    columns[mobPos.y].slots[mobPos.x].Mob = clone.GetComponent<Mob>();
+                    clone.GetComponent<BoxCollider>().enabled = true;
+                });               
+            }
+            else
+                columns[mobPos.y].slots[mobPos.x - 1].Mob?.Activate();
+        }
         if (mobPos.x < columns[mobPos.y].slots.Count - 1 && columns[mobPos.y].slots[mobPos.x + 1] != null)
             columns[mobPos.y].slots[mobPos.x + 1].Mob?.Activate();
         if (mobPos.y > 0 && columns[mobPos.y - 1].slots[mobPos.x] != null)
@@ -216,7 +250,7 @@ public class LevelController : MonoBehaviour
             print("Victory");
             return;
         }
-        Camera.main.transform.DOMoveX(Camera.main.transform.position.x + 6.3f, 0.5f).SetEase(Ease.OutBack);
+        Camera.main.transform.DOMoveX(stages[currentStage].cameraPosX, 0.5f).SetEase(Ease.OutBack);
         print("Next level");
     }
 

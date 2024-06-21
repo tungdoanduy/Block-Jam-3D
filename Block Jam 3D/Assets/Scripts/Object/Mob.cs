@@ -28,6 +28,12 @@ public class Mob : MonoBehaviour
         SetUp();
     }
 
+    public void SetUpAfterSpawn(ColorType mobType, bool activate = true)
+    {
+        colorType = mobType;
+        initActivate = activate;
+    }
+
     void SetUp()
     {
         mobMat = Instantiate(LevelController.Instance.ColorConfig.ColorDict[colorType]);

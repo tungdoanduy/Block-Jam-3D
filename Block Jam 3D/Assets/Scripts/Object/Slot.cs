@@ -11,5 +11,10 @@ public class Slot : MonoBehaviour
         set => mob = value;
     }
 
-
+    [SerializeField] Tunnel tunnel;
+    public Tunnel Tunnel
+    {
+        get => tunnel;
+        set => tunnel = value;
+    }
 }
