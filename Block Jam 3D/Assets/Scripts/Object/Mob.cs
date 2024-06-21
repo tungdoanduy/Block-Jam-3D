@@ -14,6 +14,7 @@ public class Mob : MonoBehaviour
     [SerializeField] ColorType colorType;
     public ColorType ColorType => colorType;
     Tween moveTween;
+    Coroutine corMove;
     [SerializeField] bool initActivate;
     Material mobMat;
     bool interactable = true;
@@ -83,25 +84,48 @@ public class Mob : MonoBehaviour
 
     public void Move(Vector3 destination)
     {
-        anim.Play("move");
-        float angle = Vector3.Angle(destination, new Vector3(0, 0, -1));
+        if (corMove!=null)
+            StopCoroutine(corMove);
+        corMove = StartCoroutine(Cor_Move(destination));
+        //anim.SetBool("move", true);
+        //float angle = Vector3.Angle(destination - transform.position, new Vector3(0, 0, -1));
+        //if (destination.x > transform.position.x)
+        //    angle *= -1;
+        //moveTween?.Kill();
+        //moveTween = transform.DORotate(new Vector3(0, angle, 0), 0.1f).SetEase(Ease.OutFlash).OnComplete(() =>
+        //{
+        //    transform.DOMove(destination, 0.5f).OnComplete(() =>
+        //    {
+        //        transform.DORotate(Vector3.zero, 0.1f).SetEase(Ease.OutFlash);
+        //        anim.SetBool("move", false);
+        //    });
+        //});
+    }
+
+    IEnumerator Cor_Move(Vector3 destination)
+    {
+        anim.SetBool("move", true);
+        float angle = Vector3.Angle(destination - transform.position, new Vector3(0, 0, -1));
         if (destination.x > transform.position.x)
             angle *= -1;
         moveTween?.Kill();
-        moveTween = transform.DORotate(new Vector3(0, angle, 0), 0.1f).SetEase(Ease.OutFlash).OnComplete(() =>
-        {
-            transform.DOMove(destination, 0.5f).OnComplete(() =>
-            {
-                transform.DOMove(destination, 0.5f);
-                transform.DORotate(Vector3.zero, 0.1f).SetEase(Ease.OutFlash);
-                anim.Play("idle");
-            });
-        });
+        moveTween = transform.DORotate(new Vector3(0, angle, 0), 0.1f).SetEase(Ease.OutFlash);
+        yield return moveTween.WaitForCompletion();
+        moveTween = transform.DOMove(destination, 0.5f);
+        yield return moveTween.WaitForCompletion();
+        moveTween = transform.DORotate(Vector3.zero, 0.1f).SetEase(Ease.OutFlash);
+        anim.SetBool("move", false);
     }
 
     public void Disappear()
     {
         transform.DOMoveY(0.12f, 0.25f);
-        transform.DOScale(0.25f, 0.25f).OnComplete(()=> transform.DOScale(0, 0.25f).SetEase(Ease.OutFlash).OnComplete(()=>Destroy(gameObject)));
+        transform.DOScale(0.25f, 0.25f).OnComplete(() => transform.DOScale(0, 0.25f).SetEase(Ease.OutFlash).OnComplete(() => Destroy(gameObject)));
+    }
+
+    private void OnDestroy()
+    {
+        if (LevelController.Instance.MobContainer.childCount == 1)
+            LevelController.Instance.Victory();
     }
 }

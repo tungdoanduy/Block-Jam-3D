@@ -25,6 +25,7 @@ public class LevelController : MonoBehaviour
     [SerializeField, Foldout("Spawn")] int col, row;
     [SerializeField, Foldout("Spawn")] GameObject mobPrefab;
     [SerializeField, Foldout("Spawn")] Transform mobContainer;
+    public Transform MobContainer => mobContainer;
     [Button]
     void SpawnMob()
     {
@@ -68,13 +69,15 @@ public class LevelController : MonoBehaviour
         }
     }
 
+   
+
     public void MoveMob(Vector2Int mobPos, Mob mob)
     {
-        mob.Anim.Play("move");
+        mob.Anim.SetBool("move",true);
         mob.transform.DOMoveZ(edgeZ, 0.5f).OnComplete(() =>
         {
             slots[currentSlot].Mob = mob;
-            Vector3 destination = new Vector3(slots[currentSlot].transform.position.x, 0.06f, slots[currentSlot].transform.position.z);
+            SortMob(currentSlot);
             /*float angle = Vector3.Angle(destination, new Vector3(0, 0, -1));
             if (destination.x > mob.transform.position.x)
                 angle *= -1;
@@ -87,8 +90,7 @@ public class LevelController : MonoBehaviour
                     mob.Anim.Play("idle");
                 });
             });*/
-            mob.Move(destination);
-            StartCoroutine(Cor_Connect(currentSlot));
+            //StartCoroutine(Cor_Connect(currentSlot));
             currentSlot++;
         });
         groundSlots[mobPos.x].slots[mobPos.y].Mob = null;
@@ -104,11 +106,36 @@ public class LevelController : MonoBehaviour
         
     }
 
+    void SortMob(int currentSlot)
+    {
+        for (int i = currentSlot - 1; i >= 0; i--)
+        {
+            if (slots[i].Mob.ColorType == slots[currentSlot].Mob.ColorType)
+            {
+                if (i == currentSlot - 1)
+                    break;
+                Mob tempMob = slots[currentSlot].Mob;
+                for (int j = currentSlot - 1; j > i; j--)
+                {
+                    slots[j].Mob.Move(new Vector3(slots[j + 1].transform.position.x, 0.06f, slots[j + 1].transform.position.z));
+                    slots[j + 1].Mob = slots[j].Mob;
+                }
+                tempMob.Move(new Vector3(slots[i+1].transform.position.x, 0.06f, slots[i+1].transform.position.z));
+                slots[i+1].Mob = tempMob;
+                StartCoroutine(Cor_Connect(i + 1));
+                return;
+            }
+        }
+        slots[currentSlot].Mob.Move(new Vector3(slots[currentSlot].transform.position.x, 0.06f, slots[currentSlot].transform.position.z));
+        StartCoroutine(Cor_Connect(currentSlot));
+    }
+
     IEnumerator Cor_Connect(int currentSlot)
     {
         if (currentSlot>=2 && slots[currentSlot-1].Mob.ColorType == slots[currentSlot].Mob.ColorType && slots[currentSlot - 2].Mob.ColorType == slots[currentSlot].Mob.ColorType)
         {
-            for (int i = currentSlot + 1; i < this.currentSlot; i++)
+            Mob mob1 = slots[currentSlot - 2].Mob, mob2 = slots[currentSlot - 1].Mob, mob3 = slots[currentSlot].Mob;
+            for (int i = currentSlot + 1; i <= this.currentSlot; i++)
             {
                 if (slots[i].Mob == null)
                     break;
@@ -117,11 +144,21 @@ public class LevelController : MonoBehaviour
                 slots[i].Mob = null;
             }
             this.currentSlot -= 3;
-            slots[currentSlot - 2].Mob.Disappear();
+            mob1.Disappear();
             yield return new WaitForSeconds(0.1f);
-            slots[currentSlot - 1].Mob.Disappear();
+            mob2.Disappear();
             yield return new WaitForSeconds(0.1f);
-            slots[currentSlot].Mob.Disappear();
+            mob3.Disappear();
         }
+    }
+
+    public void Victory()
+    {
+        print("Victory");
+    }
+
+    void Lose()
+    {
+        print("Lose");
     }
 }
