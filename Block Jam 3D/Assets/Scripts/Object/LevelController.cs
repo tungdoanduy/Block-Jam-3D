@@ -3,6 +3,8 @@ using NaughtyAttributes;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEditor.PlayerSettings;
+
 [System.Serializable]
 public class Column
 {
@@ -47,6 +49,50 @@ public class LevelController : MonoBehaviour
         edgeZ = edge.position.z;
     }
 
+    private void Update()
+    {
+        Click();
+    }
+
+    void HandleInput(Vector3 position)
+    {
+        Ray ray = Camera.main.ScreenPointToRay(position);
+        RaycastHit hit;
+
+        if (Physics.Raycast(ray, out hit))
+        {
+            Debug.Log(hit.transform.name);
+            if (hit.collider != null && hit.collider.CompareTag("Mob"))
+            {
+
+                GameObject touchedObject = hit.transform.gameObject;
+
+                Debug.Log("Touched " + touchedObject.transform.name);
+                Mob script = hit.collider.GetComponent<Mob>();
+                MoveMob(script.Pos, script);
+                Destroy(hit.collider);
+            }
+        }
+    }
+
+    void Click()
+    {
+#if UNITY_EDITOR
+        if (Input.GetMouseButtonUp(0))
+        {
+            Vector3 position = Input.mousePosition;
+            HandleInput(position);
+        }
+
+#else
+        if (Input.touchCount > 0 && Input.GetTouch(0).phase = TouchPhase.Ended)
+        {
+            Vector3 position = Input.GetTouch(0).position;
+            HandleInput(position);
+        }
+#endif
+    }
+
     [Button]
     void SetUp()
     {
@@ -77,20 +123,7 @@ public class LevelController : MonoBehaviour
         mob.transform.DOMoveZ(edgeZ, 0.5f).OnComplete(() =>
         {
             slots[currentSlot].Mob = mob;
-            SortMob(currentSlot);
-            /*float angle = Vector3.Angle(destination, new Vector3(0, 0, -1));
-            if (destination.x > mob.transform.position.x)
-                angle *= -1;
-            mob.transform.DORotate(new Vector3(0, angle, 0), 0.1f).SetEase(Ease.OutFlash).OnComplete(() =>
-            {
-                mob.transform.DOMove(destination, 0.5f).OnComplete(() =>
-                {
-                    mob.transform.DOMove(destination, 0.5f);
-                    mob.transform.DORotate(Vector3.zero, 0.1f).SetEase(Ease.OutFlash);
-                    mob.Anim.Play("idle");
-                });
-            });*/
-            //StartCoroutine(Cor_Connect(currentSlot));
+            SortMob(currentSlot);;
             currentSlot++;
         });
         groundSlots[mobPos.x].slots[mobPos.y].Mob = null;
