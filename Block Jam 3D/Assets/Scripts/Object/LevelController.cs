@@ -37,6 +37,11 @@ public class LevelController : MonoBehaviour
     [SerializeField, Foldout("Spawn")] int col, row;
     [SerializeField, Foldout("Spawn")] GameObject mobPrefab,tunnelPrefab;
     public Transform MobContainer => stages[currentStage].mobContainer;
+    bool interactable = false;
+    public bool Interactable
+    {
+        set => interactable = value;
+    }
     [Button]
     void SpawnMob()
     {
@@ -90,7 +95,8 @@ public class LevelController : MonoBehaviour
 
     private void Update()
     {
-        Click();
+        if (interactable)
+            Click();
     }
 
     void SetUpObject()
@@ -247,15 +253,15 @@ public class LevelController : MonoBehaviour
         currentStage++;
         if (currentStage == stages.Count)
         {
-            print("Victory");
+            UIController.Instance.Victory();
             return;
         }
         Camera.main.transform.DOMoveX(stages[currentStage].cameraPosX, 0.5f).SetEase(Ease.OutBack);
-        print("Next level");
+        
     }
 
     void Lose()
     {
-        print("Lose");
+        UIController.Instance.Lose();
     }
 }
