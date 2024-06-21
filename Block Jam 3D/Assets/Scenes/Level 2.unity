@@ -5930,7 +5930,7 @@ MonoBehaviour:
   - {fileID: 265689625}
   eyes: {fileID: 2117384036}
   pos: {x: 0, y: 2}
-  colorType: 3
+  colorType: 4
   initActivate: 0
 --- !u!95 &116649268
 Animator:
@@ -6549,7 +6549,7 @@ MonoBehaviour:
   - {fileID: 259615383}
   eyes: {fileID: 1453442681}
   pos: {x: 0, y: 2}
-  colorType: 1
+  colorType: 2
   initActivate: 0
 --- !u!95 &182483332
 Animator:
@@ -13268,6 +13268,8 @@ MonoBehaviour:
       - {fileID: 1016998870}
       - {fileID: 1801036766}
     mobContainer: {fileID: 1731292304}
+    tunnelContainer: {fileID: 0}
+    cameraPosX: 0
   - slotContainer: {fileID: 239155155}
     groundSlotContainer: {fileID: 1359613749}
     slots:
@@ -13293,12 +13295,15 @@ MonoBehaviour:
       - {fileID: 223310341}
       - {fileID: 806057049}
     mobContainer: {fileID: 1534651803}
+    tunnelContainer: {fileID: 0}
+    cameraPosX: 6.3
   setUpStage: 1
   edge: {fileID: 270317318}
   colorConfig: {fileID: 11400000, guid: b5142b0cf0f007a468a855ac8cdab070, type: 2}
   col: 3
   row: 2
   mobPrefab: {fileID: 2158297041048796114, guid: 9f774274117a210429844ecb92ed6dce, type: 3}
+  tunnelPrefab: {fileID: 0}
 --- !u!4 &260773710
 Transform:
   m_ObjectHideFlags: 0
@@ -42472,7 +42477,7 @@ MonoBehaviour:
   - {fileID: 1135116363}
   eyes: {fileID: 1665251521}
   pos: {x: 1, y: 1}
-  colorType: 3
+  colorType: 4
   initActivate: 1
 --- !u!95 &817387928
 Animator:
@@ -44060,7 +44065,7 @@ MonoBehaviour:
   - {fileID: 648200402}
   eyes: {fileID: 1034920214}
   pos: {x: 0, y: 0}
-  colorType: 0
+  colorType: 1
   initActivate: 0
 --- !u!95 &992840165
 Animator:
@@ -45584,7 +45589,7 @@ MonoBehaviour:
   - {fileID: 1276669537}
   eyes: {fileID: 1045366138}
   pos: {x: 0, y: 1}
-  colorType: 1
+  colorType: 2
   initActivate: 0
 --- !u!95 &1160824109
 Animator:
@@ -51107,7 +51112,7 @@ MonoBehaviour:
   - {fileID: 747873911}
   eyes: {fileID: 658150077}
   pos: {x: 1, y: 4}
-  colorType: 3
+  colorType: 4
   initActivate: 0
 --- !u!95 &1235509861
 Animator:
@@ -56960,7 +56965,7 @@ MonoBehaviour:
   - {fileID: 1418241540}
   eyes: {fileID: 718904605}
   pos: {x: 1, y: 2}
-  colorType: 1
+  colorType: 2
   initActivate: 0
 --- !u!95 &1277849816
 Animator:
@@ -57270,7 +57275,7 @@ MonoBehaviour:
   - {fileID: 716980476}
   eyes: {fileID: 1442158517}
   pos: {x: 0, y: 0}
-  colorType: 3
+  colorType: 4
   initActivate: 0
 --- !u!95 &1308370727
 Animator:
@@ -60982,7 +60987,7 @@ MonoBehaviour:
   - {fileID: 1958242518}
   eyes: {fileID: 1065148521}
   pos: {x: 2, y: 2}
-  colorType: 1
+  colorType: 2
   initActivate: 1
 --- !u!95 &1627597703
 Animator:
@@ -72654,7 +72659,7 @@ MonoBehaviour:
   - {fileID: 1448732082}
   eyes: {fileID: 223309075}
   pos: {x: 1, y: 2}
-  colorType: 1
+  colorType: 2
   initActivate: 1
 --- !u!95 &1776420793
 Animator:
@@ -72757,7 +72762,7 @@ MonoBehaviour:
   - {fileID: 1731947134}
   eyes: {fileID: 71305867}
   pos: {x: 1, y: 0}
-  colorType: 0
+  colorType: 1
   initActivate: 0
 --- !u!95 &1776893827
 Animator:
@@ -73415,7 +73420,7 @@ MonoBehaviour:
   - {fileID: 670052785}
   eyes: {fileID: 1259524348}
   pos: {x: 1, y: 0}
-  colorType: 1
+  colorType: 2
   initActivate: 1
 --- !u!95 &1814984000
 Animator:
@@ -73591,7 +73596,7 @@ MonoBehaviour:
   - {fileID: 346331602}
   eyes: {fileID: 1744579832}
   pos: {x: 2, y: 0}
-  colorType: 0
+  colorType: 1
   initActivate: 1
 --- !u!95 &1820409382
 Animator:
@@ -74303,7 +74308,7 @@ MonoBehaviour:
   - {fileID: 1286528086}
   eyes: {fileID: 1850320993}
   pos: {x: 2, y: 4}
-  colorType: 3
+  colorType: 4
   initActivate: 1
 --- !u!95 &1862851782
 Animator:
@@ -74504,7 +74509,7 @@ MonoBehaviour:
   - {fileID: 1508740347}
   eyes: {fileID: 1707820306}
   pos: {x: 0, y: 4}
-  colorType: 3
+  colorType: 4
   initActivate: 0
 --- !u!95 &1879495113
 Animator:
