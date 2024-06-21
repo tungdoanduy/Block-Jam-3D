@@ -2,8 +2,8 @@ using DG.Tweening;
 using NaughtyAttributes;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
-using static UnityEditor.PlayerSettings;
 
 [System.Serializable]
 public class Column
@@ -11,28 +11,58 @@ public class Column
     public List<Slot> slots = new List<Slot>();
 }
 
+[System.Serializable]
+public class Stage
+{
+    public Transform slotContainer;
+    public Transform groundSlotContainer;
+    public List<Slot> slots = new List<Slot>();
+    public List<Column> groundSlots = new List<Column>();
+    public Transform mobContainer;
+}
+
 public class LevelController : MonoBehaviour
 {
     public static LevelController Instance {  get; private set; }
-    [SerializeField] Transform slotContainer;
-    [SerializeField] Transform groundSlotContainer;
-    [SerializeField,ReadOnly] List<Slot> slots = new List<Slot>();
-    [SerializeField,ReadOnly] List<Column> groundSlots = new List<Column>();
+    [SerializeField] List<Stage> stages = new List<Stage>();
+    [SerializeField] int setUpStage = 0;
     [SerializeField] Transform edge;
     float edgeZ;
     int currentSlot = 0;//max = 7
+    int currentStage = 0;
     [SerializeField] ColorConfig colorConfig;
     public ColorConfig ColorConfig => colorConfig;
 
     [SerializeField, Foldout("Spawn")] int col, row;
     [SerializeField, Foldout("Spawn")] GameObject mobPrefab;
-    [SerializeField, Foldout("Spawn")] Transform mobContainer;
-    public Transform MobContainer => mobContainer;
+    public Transform MobContainer => stages[currentStage].mobContainer;
     [Button]
     void SpawnMob()
     {
-        GameObject clone = Instantiate(mobPrefab, groundSlots[col - 1].slots[row-1].transform.position + new Vector3(0,0.01f,0),Quaternion.identity,mobContainer);
-        groundSlots[col - 1].slots[row - 1].Mob = clone.GetComponent<Mob>();
+        GameObject clone = Instantiate(mobPrefab, stages[setUpStage].groundSlots[col - 1].slots[row-1].transform.position + new Vector3(0,0.01f,0),Quaternion.identity, stages[setUpStage].mobContainer);
+        clone.GetComponent<Mob>().Pos = new Vector2Int(row-1,col-1);
+    }
+
+    [Button]
+    void SetUp()
+    {
+        stages[setUpStage].slots.Clear();
+        for (int i = 0; i < stages[setUpStage].slotContainer.childCount; i++)
+        {
+            stages[setUpStage].slots.Add(stages[setUpStage].slotContainer.GetChild(i).GetComponent<Slot>());
+        }
+
+        stages[setUpStage].groundSlots.Clear();
+        for (int i = 0; i < stages[setUpStage].groundSlotContainer.childCount; i++)
+        {
+            Column col = new Column();
+            Transform column = stages[setUpStage].groundSlotContainer.GetChild(i);
+            for (int j = 0; j < column.childCount; j++)
+            {
+                col.slots.Add(column.GetChild(j).GetComponent<Slot>());
+            }
+            stages[setUpStage].groundSlots.Add(col);
+        }
     }
 
 
@@ -47,11 +77,24 @@ public class LevelController : MonoBehaviour
     private void Start()
     {
         edgeZ = edge.position.z;
+        SetUpMob();
     }
 
     private void Update()
     {
         Click();
+    }
+
+    void SetUpMob()
+    {
+        foreach(Stage stage in stages)
+        {
+            for (int i = 0;i<stage.mobContainer.childCount;i++)
+            {
+                Mob temp = stage.mobContainer.GetChild(i).GetComponent<Mob>();
+                stage.groundSlots[temp.Pos.y].slots[temp.Pos.x].Mob = temp;
+            }
+        }
     }
 
     void HandleInput(Vector3 position)
@@ -70,6 +113,7 @@ public class LevelController : MonoBehaviour
                 Debug.Log("Touched " + touchedObject.transform.name);
                 Mob script = hit.collider.GetComponent<Mob>();
                 MoveMob(script.Pos, script);
+                ActivateMob(script.Pos);
                 Destroy(hit.collider);
             }
         }
@@ -93,88 +137,67 @@ public class LevelController : MonoBehaviour
 #endif
     }
 
-    [Button]
-    void SetUp()
+    void ActivateMob(Vector2Int mobPos)
     {
-        slots.Clear();
-        for (int i =0;i<slotContainer.childCount;i++)
-        {
-            slots.Add(slotContainer.GetChild(i).GetComponent<Slot>());
-        }
-
-        groundSlots.Clear();
-        for (int i = 0; i < groundSlotContainer.childCount; i++)
-        {
-            Column col = new Column();
-            Transform column = groundSlotContainer.GetChild(i);
-            for (int j = 0; j < column.childCount; j++)
-            {
-                col.slots.Add(column.GetChild(j).GetComponent<Slot>());
-            }
-            groundSlots.Add(col);
-        }
+        List<Column> columns = stages[currentStage].groundSlots;
+        if (mobPos.x > 0 && columns[mobPos.y].slots[mobPos.x - 1] != null)
+            columns[mobPos.y].slots[mobPos.x - 1].Mob?.Activate();
+        if (mobPos.x < columns[mobPos.y].slots.Count - 1 && columns[mobPos.y].slots[mobPos.x + 1] != null)
+            columns[mobPos.y].slots[mobPos.x + 1].Mob?.Activate();
+        if (mobPos.y > 0 && columns[mobPos.y - 1].slots[mobPos.x] != null)
+            columns[mobPos.y - 1].slots[mobPos.x].Mob?.Activate();
+        if (mobPos.y < columns.Count - 1 && columns[mobPos.y + 1].slots[mobPos.x] != null)
+            columns[mobPos.y + 1].slots[mobPos.x].Mob?.Activate();
     }
-
-   
 
     public void MoveMob(Vector2Int mobPos, Mob mob)
     {
         mob.Anim.SetBool("move",true);
         mob.transform.DOMoveZ(edgeZ, 0.5f).OnComplete(() =>
         {
-            slots[currentSlot].Mob = mob;
+            stages[currentStage].slots[currentSlot].Mob = mob;
             SortMob(currentSlot);;
             currentSlot++;
         });
-        groundSlots[mobPos.x].slots[mobPos.y].Mob = null;
-
-        for (int i = mobPos.y; i >= 0; i--)
-        {
-            if (groundSlots[mobPos.x].slots[i].Mob != null)
-            {
-                groundSlots[mobPos.x].slots[i].Mob.Activate();
-                return;
-            }
-        }
-        
+        stages[currentStage].groundSlots[mobPos.y].slots[mobPos.x].Mob = null;       
     }
 
     void SortMob(int currentSlot)
     {
         for (int i = currentSlot - 1; i >= 0; i--)
         {
-            if (slots[i].Mob.ColorType == slots[currentSlot].Mob.ColorType)
+            if (stages[currentStage].slots[i].Mob.ColorType == stages[currentStage].slots[currentSlot].Mob.ColorType)
             {
                 if (i == currentSlot - 1)
                     break;
-                Mob tempMob = slots[currentSlot].Mob;
+                Mob tempMob = stages[currentStage].slots[currentSlot].Mob;
                 for (int j = currentSlot - 1; j > i; j--)
                 {
-                    slots[j].Mob.Move(new Vector3(slots[j + 1].transform.position.x, 0.06f, slots[j + 1].transform.position.z));
-                    slots[j + 1].Mob = slots[j].Mob;
+                    stages[currentStage].slots[j].Mob.Move(new Vector3(stages[currentStage].slots[j + 1].transform.position.x, 0.06f, stages[currentStage].slots[j + 1].transform.position.z));
+                    stages[currentStage].slots[j + 1].Mob = stages[currentStage].slots[j].Mob;
                 }
-                tempMob.Move(new Vector3(slots[i+1].transform.position.x, 0.06f, slots[i+1].transform.position.z));
-                slots[i+1].Mob = tempMob;
+                tempMob.Move(new Vector3(stages[currentStage].slots[i+1].transform.position.x, 0.06f, stages[currentStage].slots[i+1].transform.position.z));
+                stages[currentStage].slots[i+1].Mob = tempMob;
                 StartCoroutine(Cor_Connect(i + 1));
                 return;
             }
         }
-        slots[currentSlot].Mob.Move(new Vector3(slots[currentSlot].transform.position.x, 0.06f, slots[currentSlot].transform.position.z));
+        stages[currentStage].slots[currentSlot].Mob.Move(new Vector3(stages[currentStage].slots[currentSlot].transform.position.x, 0.06f, stages[currentStage].slots[currentSlot].transform.position.z));
         StartCoroutine(Cor_Connect(currentSlot));
     }
 
     IEnumerator Cor_Connect(int currentSlot)
     {
-        if (currentSlot>=2 && slots[currentSlot-1].Mob.ColorType == slots[currentSlot].Mob.ColorType && slots[currentSlot - 2].Mob.ColorType == slots[currentSlot].Mob.ColorType)
+        if (currentSlot>=2 && stages[currentStage].slots[currentSlot-1].Mob.ColorType == stages[currentStage].slots[currentSlot].Mob.ColorType && stages[currentStage].slots[currentSlot - 2].Mob.ColorType == stages[currentStage].slots[currentSlot].Mob.ColorType)
         {
-            Mob mob1 = slots[currentSlot - 2].Mob, mob2 = slots[currentSlot - 1].Mob, mob3 = slots[currentSlot].Mob;
+            Mob mob1 = stages[currentStage].slots[currentSlot - 2].Mob, mob2 = stages[currentStage].slots[currentSlot - 1].Mob, mob3 = stages[currentStage].slots[currentSlot].Mob;
             for (int i = currentSlot + 1; i <= this.currentSlot; i++)
             {
-                if (slots[i].Mob == null)
+                if (stages[currentStage].slots[i].Mob == null)
                     break;
-                slots[i].Mob.Move(new Vector3(slots[i - 3].transform.position.x, 0.06f, slots[i - 3].transform.position.z));
-                slots[i - 3].Mob = slots[i].Mob;
-                slots[i].Mob = null;
+                stages[currentStage].slots[i].Mob.Move(new Vector3(stages[currentStage].slots[i - 3].transform.position.x, 0.06f, stages[currentStage].slots[i - 3].transform.position.z));
+                stages[currentStage].slots[i - 3].Mob = stages[currentStage].slots[i].Mob;
+                stages[currentStage].slots[i].Mob = null;
             }
             this.currentSlot -= 3;
             mob1.Disappear();
@@ -187,7 +210,14 @@ public class LevelController : MonoBehaviour
 
     public void Victory()
     {
-        print("Victory");
+        currentStage++;
+        if (currentStage == stages.Count)
+        {
+            print("Victory");
+            return;
+        }
+        Camera.main.transform.DOMoveX(Camera.main.transform.position.x + 6.3f, 0.5f).SetEase(Ease.OutBack);
+        print("Next level");
     }
 
     void Lose()

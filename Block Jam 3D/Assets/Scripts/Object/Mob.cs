@@ -6,8 +6,10 @@ using UnityEngine;
 public class Mob : MonoBehaviour
 {
     [SerializeField] Animator anim;
+    [SerializeField] BoxCollider col;
     public Animator Anim => anim;
     [SerializeField] List<MeshRenderer> parts = new List<MeshRenderer>();
+    [SerializeField] GameObject eyes;
     [SerializeField] Vector2Int pos;
     public Vector2Int Pos 
     {   get => pos;
@@ -31,12 +33,26 @@ public class Mob : MonoBehaviour
         mobMat = Instantiate(LevelController.Instance.ColorConfig.ColorDict[colorType]);
         foreach (MeshRenderer part in parts)
             part.material = mobMat;
-
+        if (!initActivate)
+        {
+            anim.enabled = false;
+            Vector3 pos = transform.position;
+            transform.position = new Vector3(pos.x, -0.36f, pos.z);
+            col.enabled = false;
+            mobMat.SetFloat("_Glossiness", 1);
+            eyes.SetActive(false);
+        }
     }
 
     public void Activate()
     {
-
+        transform.DOMoveY(0.06f, 0.25f).SetEase(Ease.OutFlash).OnComplete(() =>
+        {
+            anim.enabled = true;
+            col.enabled = true;
+            mobMat.SetFloat("_Glossiness", 0.3f);
+            eyes.SetActive(true);
+        });
     }
 
     public void Move(Vector3 destination)

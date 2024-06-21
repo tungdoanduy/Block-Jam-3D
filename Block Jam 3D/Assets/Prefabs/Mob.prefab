@@ -5068,10 +5068,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   anim: {fileID: 1977955223597399006}
+  col: {fileID: 8558947380464893958}
   parts:
   - {fileID: 3647461651588297125}
   - {fileID: 2404474461392979345}
   - {fileID: 3480547271831310486}
+  eyes: {fileID: 5572854623732053269}
   pos: {x: 0, y: 0}
   colorType: 0
   initActivate: 0
@@ -5109,5 +5111,10 @@ MeshRenderer:
 --- !u!23 &3647461651588297125 stripped
 MeshRenderer:
   m_CorrespondingSourceObject: {fileID: -6652725513331149018, guid: 905b5e04ca4eba64fb10590efc7e2d4f, type: 3}
+  m_PrefabInstance: {fileID: 1239235815896270467}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &5572854623732053269 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6657560127643677590, guid: 905b5e04ca4eba64fb10590efc7e2d4f, type: 3}
   m_PrefabInstance: {fileID: 1239235815896270467}
   m_PrefabAsset: {fileID: 0}
