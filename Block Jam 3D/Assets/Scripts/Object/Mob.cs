@@ -91,7 +91,7 @@ public class Mob : MonoBehaviour
 
     private void OnDestroy()
     {
-        if (LevelController.Instance.MobContainer.childCount == 1)
+        if (LevelController.Instance != null && LevelController.Instance.MobContainer.childCount == 1)
             LevelController.Instance.Victory();
     }
 }

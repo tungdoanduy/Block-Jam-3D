@@ -8,9 +8,9 @@ using UnityEngine.UI;
 
 public class CustomButton : MonoBehaviour
 {
-    [SerializeField] List<Image> parts = new List<Image>();
+    [SerializeField] protected List<Image> parts = new List<Image>();
     [SerializeField] RectTransform sun, tree;
-    [SerializeField] TMP_Text text;
+    [SerializeField] protected TMP_Text text;
     Sequence seq;
     [SerializeField] float interactTime;
 

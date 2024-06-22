@@ -246,6 +246,10 @@ public class LevelController : MonoBehaviour
             yield return new WaitForSeconds(0.1f);
             mob3.Disappear();
         }
+        if (this.currentSlot == 7)
+        {
+            Lose();
+        }
     }
 
     public void Victory()

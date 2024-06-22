@@ -13,8 +13,9 @@ public class UIController : MonoBehaviour
     [SerializeField] Image bg;
     [SerializeField] Transform settingPanel;
     [SerializeField] TMP_Text endLevelText;
-    [SerializeField] string nextLevel;
+    [SerializeField] int nextLevel;
     [SerializeField] Transform nextButton,retryButton,homeButton;
+    [SerializeField] protected LevelConfig levelConfig;
 
     //[SerializeField] List<Sprite> clouds = new List<Sprite>();
     //[SerializeField] int num;
@@ -46,7 +47,7 @@ public class UIController : MonoBehaviour
     //}
 
 
-    private void Awake()
+    protected virtual void Awake()
     {
         if (Instance == null)
             Instance = this;
@@ -54,12 +55,16 @@ public class UIController : MonoBehaviour
             Destroy(gameObject);
     }
 
-    private void Start()
+    protected virtual void Start()
     {
         Sequence seq = DOTween.Sequence();
         seq.Join(cloudLeft.DOAnchorPosX(-800, 1).SetEase(Ease.Linear));
         seq.Join(cloudRight.DOAnchorPosX(800, 1).SetEase(Ease.Linear));
-        seq.Play().OnComplete(() => LevelController.Instance.Interactable = true);
+        seq.Play().OnComplete(() =>
+        {
+            if (LevelController.Instance != null)
+                LevelController.Instance.Interactable = true;
+        });
     }
 
     public void OpenSettingPanel()
@@ -75,7 +80,7 @@ public class UIController : MonoBehaviour
         bg.DOFade(0, 0.25f).OnComplete(()=> bg.raycastTarget = false);
     }
 
-    void LoadScene(string sceneName)
+    protected void LoadScene(string sceneName)
     {
         Sequence seq = DOTween.Sequence();
         seq.Join(cloudLeft.DOAnchorPosX(0, 1).SetEase(Ease.Linear));
@@ -90,7 +95,7 @@ public class UIController : MonoBehaviour
 
     public void Next()
     {
-        LoadScene(nextLevel);
+        LoadScene(levelConfig.LevelDict[(SceneType)nextLevel]);
     }
 
     public void Retry()
@@ -105,6 +110,7 @@ public class UIController : MonoBehaviour
 
     public void Victory()
     {
+        levelConfig.LevelUnlocked = nextLevel;
         endLevelText.text = SceneManager.GetActiveScene().name.ToUpper() + " PASSED";
         endLevelText.transform.DOScale(1, 0.5f).SetEase(Ease.OutBack);
         nextButton.DOScale(1, 0.5f).SetEase(Ease.OutBack);
