@@ -1,24 +1,11 @@
-using NaughtyAttributes;
 using System.Collections.Generic;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
-public class Pathfinding : MonoBehaviour
+public static class Pathfinding
 {
-    [SerializeField] Grid grid;
-
-    [SerializeField] Vector2Int start, end;
-
-    [Button]
-    void Test()
-    {
-        FindPath(start, end);
-    }
-    void FindPath(Vector2Int start, Vector2Int end)
+    public static List<Slot> FindPath(Vector2Int start, Vector2Int end, Grid grid)
     {
         Node startNode = grid.grid[start.x,start.y], endNode = grid.grid[end.x,end.y];
-        print(startNode.slot.transform.position);
-        print(endNode.slot.transform.position);
         List<Node> openSet = new List<Node>();
         HashSet<Node> closedSet = new HashSet<Node>();
         openSet.Add(startNode);
@@ -39,8 +26,7 @@ public class Pathfinding : MonoBehaviour
 
             if (node == endNode)
             {
-                RetracePath(startNode, endNode);
-                return;
+                return RetracePath(startNode, endNode);
             }
 
             foreach (Node neighbour in grid.GetNeighbors(node))
@@ -62,26 +48,26 @@ public class Pathfinding : MonoBehaviour
                 }
             }
         }
+        return null;
     }
 
-    void RetracePath(Node startNode, Node endNode)
+    static List<Slot> RetracePath(Node startNode, Node endNode)
     {
-        List<Node> path = new List<Node>();
+        List<Slot> path = new List<Slot>();
         Node currentNode = endNode;
 
         while (currentNode != startNode)
         {
-            path.Add(currentNode);
+            path.Add(currentNode.slot);
             currentNode = currentNode.parent;
         }
         path.Reverse();
 
-        grid.path = path;
-
+        return path;
     }
 
 
-    int GetDistance(Node nodeA, Node nodeB)
+    static int GetDistance(Node nodeA, Node nodeB)
     {
         int dstX = Mathf.Abs(nodeA.x - nodeB.x);    
         int dstY = Mathf.Abs(nodeA.y - nodeB.y);

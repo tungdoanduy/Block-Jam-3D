@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,9 +5,8 @@ public class Grid : MonoBehaviour
 {
     public Node[,] grid;
     int row, col;
-    public List<Node> path;
 
-    public void CreateGrid(List<Column> groundSlots)
+    public bool CreateGrid(List<Column> groundSlots)
     {
         col = groundSlots.Count;
         row = groundSlots[0].slots.Count;
@@ -21,6 +19,7 @@ public class Grid : MonoBehaviour
                 grid[i, j] = node;
             }
         }
+        return true;
     }
     public List<Node> GetNeighbors(Node node)
     {
@@ -44,9 +43,6 @@ public class Grid : MonoBehaviour
                 if (n.slot == null)
                     continue;
                 Gizmos.color = (n.walkable) ? Color.blue : Color.red;
-                if (path != null)
-                    if (path.Contains(n))
-                        Gizmos.color = Color.green;
                 Gizmos.DrawCube(n.slot.transform.position, Vector3.one * 0.35f);
             }
         }

@@ -6349,7 +6349,8 @@ MonoBehaviour:
   eyes: {fileID: 483706605}
   pos: {x: 1, y: 3}
   colorType: 1
-  initActivate: 1
+  activate: 0
+  path: []
 --- !u!95 &250026706
 Animator:
   serializedVersion: 5
@@ -6452,7 +6453,8 @@ MonoBehaviour:
   eyes: {fileID: 1388919811}
   pos: {x: 1, y: 1}
   colorType: 1
-  initActivate: 1
+  activate: 0
+  path: []
 --- !u!95 &323901697
 Animator:
   serializedVersion: 5
@@ -13431,7 +13433,8 @@ MonoBehaviour:
   eyes: {fileID: 1875817658}
   pos: {x: 2, y: 1}
   colorType: 2
-  initActivate: 1
+  activate: 0
+  path: []
 --- !u!95 &740258751
 Animator:
   serializedVersion: 5
@@ -19823,7 +19826,8 @@ MonoBehaviour:
   eyes: {fileID: 492127123}
   pos: {x: 2, y: 2}
   colorType: 2
-  initActivate: 1
+  activate: 0
+  path: []
 --- !u!95 &1052504771
 Animator:
   serializedVersion: 5
@@ -20317,7 +20321,8 @@ MonoBehaviour:
   eyes: {fileID: 1974408955}
   pos: {x: 2, y: 3}
   colorType: 2
-  initActivate: 1
+  activate: 0
+  path: []
 --- !u!95 &1188676577
 Animator:
   serializedVersion: 5
@@ -27007,9 +27012,23 @@ MonoBehaviour:
     mobContainer: {fileID: 1886890526}
     tunnelContainer: {fileID: 0}
     cameraPosX: 0
+    outSlots:
+    - {x: 3, y: 0}
+    - {x: 3, y: 1}
+    - {x: 3, y: 2}
+    - {x: 3, y: 3}
+    - {x: 3, y: 4}
+    mobs:
+    - {fileID: 323901696}
+    - {fileID: 1967301253}
+    - {fileID: 250026705}
+    - {fileID: 740258750}
+    - {fileID: 1052504770}
+    - {fileID: 1188676576}
   setUpStage: 0
   edge: {fileID: 1692232960}
   colorConfig: {fileID: 11400000, guid: b5142b0cf0f007a468a855ac8cdab070, type: 2}
+  grid: {fileID: 1913865892}
   col: 4
   row: 3
   mobPrefab: {fileID: 2158297041048796114, guid: 9f774274117a210429844ecb92ed6dce, type: 3}
@@ -27498,7 +27517,7 @@ Transform:
   m_GameObject: {fileID: 1692232959}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -3.17}
+  m_LocalPosition: {x: 0, y: 0, z: -3.15}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -33898,6 +33917,50 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 9131785622246650460, guid: 9d5122a88a917854aa6ccc5a7f4fd69f, type: 3}
   m_PrefabInstance: {fileID: 1912377143}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1913865891
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1913865893}
+  - component: {fileID: 1913865892}
+  m_Layer: 0
+  m_Name: Grid-A*
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1913865892
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1913865891}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3549ff7998cc1574a8581f2d91c98cf3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &1913865893
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1913865891}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1922698299
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -34233,7 +34296,8 @@ MonoBehaviour:
   eyes: {fileID: 88803506}
   pos: {x: 1, y: 2}
   colorType: 1
-  initActivate: 1
+  activate: 0
+  path: []
 --- !u!95 &1967301254
 Animator:
   serializedVersion: 5
@@ -39940,10 +40004,11 @@ SceneRoots:
   - {fileID: 1930173180}
   - {fileID: 1238787538}
   - {fileID: 1708069449}
-  - {fileID: 1552415836}
   - {fileID: 1692232960}
   - {fileID: 1886890526}
   - {fileID: 774491700}
   - {fileID: 1134464146}
   - {fileID: 485936097}
   - {fileID: 1762920987}
+  - {fileID: 1552415836}
+  - {fileID: 1913865893}

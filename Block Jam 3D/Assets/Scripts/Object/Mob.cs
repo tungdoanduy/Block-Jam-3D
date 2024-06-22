@@ -1,4 +1,5 @@
 using DG.Tweening;
+using NaughtyAttributes;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -20,8 +21,20 @@ public class Mob : MonoBehaviour
     public ColorType ColorType => colorType;
     Tween moveTween;
     Coroutine corMove;
-    [SerializeField] bool initActivate;
+    [SerializeField] bool activate = false;
     Material mobMat;
+    [SerializeField, ReadOnly] List<Slot> path;
+    public List<Slot> Path
+    {
+        set
+        {
+            if (value != null)
+            {
+                Activate();
+                path = value;
+            }
+        }
+    }
 
     private void Start()
     {
@@ -31,27 +44,26 @@ public class Mob : MonoBehaviour
     public void SetUpAfterSpawn(ColorType mobType, bool activate = true)
     {
         colorType = mobType;
-        initActivate = activate;
     }
 
     void SetUp()
     {
         mobMat = Instantiate(LevelController.Instance.ColorConfig.ColorDict[colorType]);
         foreach (MeshRenderer part in parts)
-            part.material = mobMat;
-        if (!initActivate)
-        {
-            anim.enabled = false;
-            Vector3 pos = transform.position;
-            transform.position = new Vector3(pos.x, -0.36f, pos.z);
-            col.enabled = false;
-            mobMat.SetFloat("_Glossiness", 1);
-            eyes.SetActive(false);
-        }
+        part.material = mobMat;
+        anim.enabled = false;
+        Vector3 pos = transform.position;
+        transform.position = new Vector3(pos.x, -0.36f, pos.z);
+        col.enabled = false;
+        mobMat.SetFloat("_Glossiness", 1);
+        eyes.SetActive(false);
     }
 
     public void Activate()
     {
+        if (activate)
+            return;
+        activate = true;
         transform.DOMoveY(0.06f, 0.25f).SetEase(Ease.OutFlash).OnComplete(() =>
         {
             anim.enabled = true;
@@ -59,6 +71,30 @@ public class Mob : MonoBehaviour
             mobMat.SetFloat("_Glossiness", 0.3f);
             eyes.SetActive(true);
         });
+    }
+    public void MoveToEdge(float edgeZ)
+    {
+        SoundManager.Instance.PlaySound(SoundType.SFX_FOOTSTEP, 0.5f);
+        anim.SetBool("move", true);
+        float durationPerSlot = 0.5f / (path.Count + 1);
+        Sequence seq = DOTween.Sequence();
+        foreach (Slot slot in path)
+        {
+            Vector3 destination = slot.transform.position;
+            float angle = Vector3.Angle(destination - transform.position, new Vector3(0, 0, -1));
+            if (angle > 80)// i mean for square angle
+            {
+                if (destination.x > transform.position.x)
+                    angle *= -1;
+                seq.Append(transform.DORotate(new Vector3(0, angle, 0), durationPerSlot * 0.2f).SetEase(Ease.OutFlash));
+                seq.Append(transform.DOMove(destination, durationPerSlot * 0.8f).SetEase(Ease.Linear));
+            }
+            else
+                seq.Append(transform.DOMove(destination, durationPerSlot).SetEase(Ease.Linear));
+
+        }
+        seq.Append(transform.DOMoveZ(edgeZ, durationPerSlot)).SetEase(Ease.Linear);
+        seq.Play();
     }
 
     public void Move(Vector3 destination)
