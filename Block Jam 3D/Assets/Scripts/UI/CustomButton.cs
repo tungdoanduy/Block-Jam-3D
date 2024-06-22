@@ -30,6 +30,7 @@ public class CustomButton : MonoBehaviour
 
     public void PointerUp()
     {
+        SoundManager.Instance.PlaySound(SoundType.SFX_CLICK);
         seq.Kill();
         seq = DOTween.Sequence();
         foreach (Image part in parts)

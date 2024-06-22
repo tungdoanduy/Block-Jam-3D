@@ -192,9 +192,11 @@ public class LevelController : MonoBehaviour
 
     public void MoveMob(Vector2Int mobPos, Mob mob)
     {
+        AudioSource moveAudio = SoundManager.Instance.PlayLoopSound(SoundType.SFX_FOOTSTEP);
         mob.Anim.SetBool("move",true);
         mob.transform.DOMoveZ(edgeZ, 0.5f).OnComplete(() =>
         {
+            SoundManager.Instance.PauseLoopSound(moveAudio);
             stages[currentStage].slots[currentSlot].Mob = mob;
             SortMob(currentSlot);;
             currentSlot++;

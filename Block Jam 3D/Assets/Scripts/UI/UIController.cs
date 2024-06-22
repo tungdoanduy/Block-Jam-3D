@@ -57,13 +57,21 @@ public class UIController : MonoBehaviour
 
     protected virtual void Start()
     {
+        SoundManager.Instance.PlaySound(SoundType.SFX_TRANSITION_OUT);
         Sequence seq = DOTween.Sequence();
         seq.Join(cloudLeft.DOAnchorPosX(-800, 1).SetEase(Ease.Linear));
         seq.Join(cloudRight.DOAnchorPosX(800, 1).SetEase(Ease.Linear));
         seq.Play().OnComplete(() =>
         {
             if (LevelController.Instance != null)
+            {
+                SoundManager.Instance.PlayLoopSound(SoundType.GAMEPLAY_THEME);
                 LevelController.Instance.Interactable = true;
+            }
+            else
+            {
+                SoundManager.Instance.PlayLoopSound(SoundType.HOME_THEME);
+            }
         });
     }
 
@@ -82,6 +90,7 @@ public class UIController : MonoBehaviour
 
     protected void LoadScene(string sceneName)
     {
+        SoundManager.Instance.PlaySound(SoundType.SFX_TRANSITION_IN);
         Sequence seq = DOTween.Sequence();
         seq.Join(cloudLeft.DOAnchorPosX(0, 1).SetEase(Ease.Linear));
         seq.Join(cloudRight.DOAnchorPosX(0, 1).SetEase(Ease.Linear));
@@ -110,6 +119,7 @@ public class UIController : MonoBehaviour
 
     public void Victory()
     {
+        SoundManager.Instance.PlaySound(SoundType.SFX_WIN);
         levelConfig.LevelUnlocked = nextLevel;
         endLevelText.text = SceneManager.GetActiveScene().name.ToUpper() + " PASSED";
         endLevelText.transform.DOScale(1, 0.5f).SetEase(Ease.OutBack);
@@ -120,6 +130,7 @@ public class UIController : MonoBehaviour
 
     public void Lose()
     {
+        SoundManager.Instance.PlaySound(SoundType.SFX_LOSE);
         endLevelText.text = SceneManager.GetActiveScene().name.ToUpper() + " FAILED";
         endLevelText.transform.DOScale(1, 0.5f).SetEase(Ease.OutBack);
         retryButton.DOScale(1, 0.5f).SetEase(Ease.OutBack);

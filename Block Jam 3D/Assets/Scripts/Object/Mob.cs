@@ -67,10 +67,10 @@ public class Mob : MonoBehaviour
             StopCoroutine(corMove);
         corMove = StartCoroutine(Cor_Move(destination));
     }
-
     IEnumerator Cor_Move(Vector3 destination)
     {
         anim.SetBool("move", true);
+        SoundManager.Instance.PlaySound(SoundType.SFX_FOOTSTEP, 0.5f);
         float angle = Vector3.Angle(destination - transform.position, new Vector3(0, 0, -1));
         if (destination.x > transform.position.x)
             angle *= -1;
@@ -86,7 +86,11 @@ public class Mob : MonoBehaviour
     public void Disappear()
     {
         transform.DOMoveY(0.12f, 0.25f);
-        transform.DOScale(0.25f, 0.25f).OnComplete(() => transform.DOScale(0, 0.25f).SetEase(Ease.OutFlash).OnComplete(() => Destroy(gameObject)));
+        transform.DOScale(0.25f, 0.25f).OnComplete(() =>
+        {
+            SoundManager.Instance.PlaySound(SoundType.SFX_DISAPPEAR, 0.75f);
+            transform.DOScale(0, 0.25f).SetEase(Ease.OutFlash).OnComplete(() => Destroy(gameObject));
+        });
     }
 
     private void OnDestroy()
