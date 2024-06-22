@@ -2,7 +2,6 @@ using DG.Tweening;
 using NaughtyAttributes;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
 
 [System.Serializable]
@@ -20,6 +19,7 @@ public class Stage
     public List<Column> groundSlots = new List<Column>();
     public Transform mobContainer,tunnelContainer;
     public float cameraPosX;
+    public Grid grid;
 }
 
 public class LevelController : MonoBehaviour
@@ -78,6 +78,11 @@ public class LevelController : MonoBehaviour
         }
     }
 
+    [Button]
+    void CreateGrid()
+    {
+        stages[setUpStage].grid.CreateGrid(stages[setUpStage].groundSlots);
+    }
 
     private void Awake()
     {
