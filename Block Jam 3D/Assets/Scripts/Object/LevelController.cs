@@ -151,7 +151,7 @@ public class LevelController : MonoBehaviour
         }
 
 #else
-        if (Input.touchCount > 0 && Input.GetTouch(0).phase = TouchPhase.Ended)
+        if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Ended)
         {
             Vector3 position = Input.GetTouch(0).position;
             HandleInput(position);
