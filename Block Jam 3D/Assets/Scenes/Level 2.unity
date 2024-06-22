@@ -5931,7 +5931,8 @@ MonoBehaviour:
   eyes: {fileID: 2117384036}
   pos: {x: 0, y: 2}
   colorType: 4
-  initActivate: 0
+  activate: 0
+  path: []
 --- !u!95 &116649268
 Animator:
   serializedVersion: 5
@@ -6550,7 +6551,8 @@ MonoBehaviour:
   eyes: {fileID: 1453442681}
   pos: {x: 0, y: 2}
   colorType: 2
-  initActivate: 0
+  activate: 0
+  path: []
 --- !u!95 &182483332
 Animator:
   serializedVersion: 5
@@ -13270,6 +13272,22 @@ MonoBehaviour:
     mobContainer: {fileID: 1731292304}
     tunnelContainer: {fileID: 0}
     cameraPosX: 0
+    outSlots:
+    - {x: 3, y: 0}
+    - {x: 3, y: 1}
+    - {x: 3, y: 2}
+    - {x: 3, y: 3}
+    - {x: 3, y: 4}
+    mobs:
+    - {fileID: 992840164}
+    - {fileID: 1776893826}
+    - {fileID: 1820409381}
+    - {fileID: 182483331}
+    - {fileID: 1277849815}
+    - {fileID: 1627597702}
+    - {fileID: 1879495112}
+    - {fileID: 1235509860}
+    - {fileID: 1862851781}
   - slotContainer: {fileID: 239155155}
     groundSlotContainer: {fileID: 1359613749}
     slots:
@@ -13297,9 +13315,21 @@ MonoBehaviour:
     mobContainer: {fileID: 1534651803}
     tunnelContainer: {fileID: 0}
     cameraPosX: 6.3
+    outSlots:
+    - {x: 2, y: 0}
+    - {x: 2, y: 1}
+    - {x: 2, y: 2}
+    mobs:
+    - {fileID: 1308370726}
+    - {fileID: 1814983999}
+    - {fileID: 817387927}
+    - {fileID: 1160824108}
+    - {fileID: 116649267}
+    - {fileID: 1776420792}
   setUpStage: 1
   edge: {fileID: 270317318}
   colorConfig: {fileID: 11400000, guid: b5142b0cf0f007a468a855ac8cdab070, type: 2}
+  grid: {fileID: 696824969}
   col: 3
   row: 2
   mobPrefab: {fileID: 2158297041048796114, guid: 9f774274117a210429844ecb92ed6dce, type: 3}
@@ -36396,6 +36426,50 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8585057558078620571, guid: 52a8d31d9b501d244861866eff47650b, type: 3}
   m_PrefabInstance: {fileID: 690490088}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &696824968
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 696824970}
+  - component: {fileID: 696824969}
+  m_Layer: 0
+  m_Name: Grid-A*
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &696824969
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 696824968}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3549ff7998cc1574a8581f2d91c98cf3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &696824970
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 696824968}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &703174416
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -42535,7 +42609,8 @@ MonoBehaviour:
   eyes: {fileID: 1665251521}
   pos: {x: 1, y: 1}
   colorType: 4
-  initActivate: 1
+  activate: 0
+  path: []
 --- !u!95 &817387928
 Animator:
   serializedVersion: 5
@@ -44232,7 +44307,8 @@ MonoBehaviour:
   eyes: {fileID: 1034920214}
   pos: {x: 0, y: 0}
   colorType: 1
-  initActivate: 0
+  activate: 0
+  path: []
 --- !u!95 &992840165
 Animator:
   serializedVersion: 5
@@ -45756,7 +45832,8 @@ MonoBehaviour:
   eyes: {fileID: 1045366138}
   pos: {x: 0, y: 1}
   colorType: 2
-  initActivate: 0
+  activate: 0
+  path: []
 --- !u!95 &1160824109
 Animator:
   serializedVersion: 5
@@ -51279,7 +51356,8 @@ MonoBehaviour:
   eyes: {fileID: 658150077}
   pos: {x: 1, y: 4}
   colorType: 4
-  initActivate: 0
+  activate: 0
+  path: []
 --- !u!95 &1235509861
 Animator:
   serializedVersion: 5
@@ -57132,7 +57210,8 @@ MonoBehaviour:
   eyes: {fileID: 718904605}
   pos: {x: 1, y: 2}
   colorType: 2
-  initActivate: 0
+  activate: 0
+  path: []
 --- !u!95 &1277849816
 Animator:
   serializedVersion: 5
@@ -57442,7 +57521,8 @@ MonoBehaviour:
   eyes: {fileID: 1442158517}
   pos: {x: 0, y: 0}
   colorType: 4
-  initActivate: 0
+  activate: 0
+  path: []
 --- !u!95 &1308370727
 Animator:
   serializedVersion: 5
@@ -61086,7 +61166,8 @@ MonoBehaviour:
   eyes: {fileID: 1065148521}
   pos: {x: 2, y: 2}
   colorType: 2
-  initActivate: 1
+  activate: 0
+  path: []
 --- !u!95 &1627597703
 Animator:
   serializedVersion: 5
@@ -72815,7 +72896,8 @@ MonoBehaviour:
   eyes: {fileID: 223309075}
   pos: {x: 1, y: 2}
   colorType: 2
-  initActivate: 1
+  activate: 0
+  path: []
 --- !u!95 &1776420793
 Animator:
   serializedVersion: 5
@@ -72918,7 +73000,8 @@ MonoBehaviour:
   eyes: {fileID: 71305867}
   pos: {x: 1, y: 0}
   colorType: 1
-  initActivate: 0
+  activate: 0
+  path: []
 --- !u!95 &1776893827
 Animator:
   serializedVersion: 5
@@ -73576,7 +73659,8 @@ MonoBehaviour:
   eyes: {fileID: 1259524348}
   pos: {x: 1, y: 0}
   colorType: 2
-  initActivate: 1
+  activate: 0
+  path: []
 --- !u!95 &1814984000
 Animator:
   serializedVersion: 5
@@ -73752,7 +73836,8 @@ MonoBehaviour:
   eyes: {fileID: 1744579832}
   pos: {x: 2, y: 0}
   colorType: 1
-  initActivate: 1
+  activate: 0
+  path: []
 --- !u!95 &1820409382
 Animator:
   serializedVersion: 5
@@ -74464,7 +74549,8 @@ MonoBehaviour:
   eyes: {fileID: 1850320993}
   pos: {x: 2, y: 4}
   colorType: 4
-  initActivate: 1
+  activate: 0
+  path: []
 --- !u!95 &1862851782
 Animator:
   serializedVersion: 5
@@ -74665,7 +74751,8 @@ MonoBehaviour:
   eyes: {fileID: 1707820306}
   pos: {x: 0, y: 4}
   colorType: 4
-  initActivate: 0
+  activate: 0
+  path: []
 --- !u!95 &1879495113
 Animator:
   serializedVersion: 5
@@ -96137,7 +96224,6 @@ SceneRoots:
   - {fileID: 720780681}
   - {fileID: 239155155}
   - {fileID: 270317318}
-  - {fileID: 260773710}
   - {fileID: 1039001737}
   - {fileID: 1851903364}
   - {fileID: 628286671}
@@ -96145,3 +96231,5 @@ SceneRoots:
   - {fileID: 853958910}
   - {fileID: 640525018}
   - {fileID: 1767187595}
+  - {fileID: 260773710}
+  - {fileID: 696824970}

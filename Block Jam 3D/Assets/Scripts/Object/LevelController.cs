@@ -2,7 +2,7 @@ using DG.Tweening;
 using NaughtyAttributes;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting.Antlr3.Runtime.Misc;
+using System.Net;
 using UnityEngine;
 
 [System.Serializable]
@@ -20,6 +20,9 @@ public class Stage
     public List<Column> groundSlots = new List<Column>();
     public Transform mobContainer,tunnelContainer;
     public float cameraPosX;
+    public List<Vector2Int> outSlots;
+    
+    public List<Mob> mobs = new List<Mob>();
 }
 
 public class LevelController : MonoBehaviour
@@ -33,6 +36,7 @@ public class LevelController : MonoBehaviour
     int currentStage = 0;
     [SerializeField] ColorConfig colorConfig;
     public ColorConfig ColorConfig => colorConfig;
+    [SerializeField] Grid grid;
 
     [SerializeField, Foldout("Spawn")] int col, row;
     [SerializeField, Foldout("Spawn")] GameObject mobPrefab,tunnelPrefab;
@@ -46,7 +50,9 @@ public class LevelController : MonoBehaviour
     void SpawnMob()
     {
         GameObject clone = Instantiate(mobPrefab, stages[setUpStage].groundSlots[col - 1].slots[row-1].transform.position,Quaternion.identity, stages[setUpStage].mobContainer);
-        clone.GetComponent<Mob>().Pos = new Vector2Int(row-1,col-1);
+        Mob scr = clone.GetComponent<Mob>();
+        scr.Pos = new Vector2Int(row-1,col-1);
+        stages[setUpStage].mobs.Add(scr);
     }
 
     [Button]
@@ -78,7 +84,6 @@ public class LevelController : MonoBehaviour
         }
     }
 
-
     private void Awake()
     {
         if (Instance == null)
@@ -91,6 +96,7 @@ public class LevelController : MonoBehaviour
     {
         edgeZ = edge.position.z;
         SetUpObject();
+        CreateGrid();
     }
 
     private void Update()
@@ -126,16 +132,11 @@ public class LevelController : MonoBehaviour
 
         if (Physics.Raycast(ray, out hit))
         {
-            Debug.Log(hit.transform.name);
             if (hit.collider != null && hit.collider.CompareTag("Mob"))
             {
-
-                GameObject touchedObject = hit.transform.gameObject;
-
-                Debug.Log("Touched " + touchedObject.transform.name);
                 Mob script = hit.collider.GetComponent<Mob>();
                 MoveMob(script.Pos, script);
-                ActivateMob(script.Pos);
+                ActivateTunnel(script.Pos);
                 Destroy(hit.collider);
             }
         }
@@ -159,17 +160,53 @@ public class LevelController : MonoBehaviour
 #endif
     }
 
-    void ActivateMob(Vector2Int mobPos)
+    void CreateGrid()
+    {
+        if (grid.CreateGrid(stages[currentStage].groundSlots))
+        {
+            FindPath();
+        }
+    }
+
+    void FindPath()
+    {
+        List<Vector2Int> endPoints = new List<Vector2Int>();
+        foreach (Vector2Int outSlot in stages[currentStage].outSlots)
+        {
+            Slot currentSlot = stages[currentStage].groundSlots[outSlot.y].slots[outSlot.x];
+            if (currentSlot != null && currentSlot.Mob == null && currentSlot.Tunnel == null)
+            {
+                endPoints.Add(outSlot);
+            }
+        }
+
+        foreach (Mob mob in stages[currentStage].mobs)
+        {
+            List<Slot> shortestPath = null;
+            foreach (Vector2Int endPoint in endPoints)
+            {
+                List<Slot> path = Pathfinding.FindPath(mob.Pos, endPoint, grid);
+                if (path == null)
+                    continue;
+                if (shortestPath == null || shortestPath.Count > path.Count)
+                    shortestPath = path;
+            }
+            mob.Path = shortestPath;
+        }
+    }
+
+    void ActivateTunnel(Vector2Int mobPos)
     {
         List<Column> columns = stages[currentStage].groundSlots;
         if (mobPos.x > 0 && columns[mobPos.y].slots[mobPos.x - 1] != null)
         {
             ColorType color = ColorType.NONE;
-            if (columns[mobPos.y].slots[mobPos.x - 1].Tunnel!=null && columns[mobPos.y].slots[mobPos.x - 1].Tunnel.GetMob(out color))
+            if (columns[mobPos.y].slots[mobPos.x - 1].Tunnel != null && columns[mobPos.y].slots[mobPos.x - 1].Tunnel.GetMob(out color))
             {
                 GameObject clone = Instantiate(mobPrefab, columns[mobPos.y].slots[mobPos.x - 1].transform.position, Quaternion.identity, stages[currentStage].mobContainer);
                 clone.GetComponent<Mob>().SetUpAfterSpawn(color);
                 clone.GetComponent<Mob>().Pos = mobPos;
+                stages[currentStage].mobs.Add(clone.GetComponent<Mob>());   
                 clone.transform.localScale = Vector3.zero;
                 clone.GetComponent<BoxCollider>().enabled = false;
                 clone.transform.DOMove(columns[mobPos.y].slots[mobPos.x].transform.position, 0.15f).SetEase(Ease.OutFlash);
@@ -177,31 +214,31 @@ public class LevelController : MonoBehaviour
                 {
                     columns[mobPos.y].slots[mobPos.x].Mob = clone.GetComponent<Mob>();
                     clone.GetComponent<BoxCollider>().enabled = true;
-                });               
+                });
             }
             else
-                columns[mobPos.y].slots[mobPos.x - 1].Mob?.Activate();
+                grid.grid[mobPos.x, mobPos.y].walkable = true;
         }
-        if (mobPos.x < columns[mobPos.y].slots.Count - 1 && columns[mobPos.y].slots[mobPos.x + 1] != null)
-            columns[mobPos.y].slots[mobPos.x + 1].Mob?.Activate();
-        if (mobPos.y > 0 && columns[mobPos.y - 1].slots[mobPos.x] != null)
-            columns[mobPos.y - 1].slots[mobPos.x].Mob?.Activate();
-        if (mobPos.y < columns.Count - 1 && columns[mobPos.y + 1].slots[mobPos.x] != null)
-            columns[mobPos.y + 1].slots[mobPos.x].Mob?.Activate();
+        else
+            grid.grid[mobPos.x, mobPos.y].walkable = true;
+        FindPath();
     }
 
     public void MoveMob(Vector2Int mobPos, Mob mob)
     {
-        AudioSource moveAudio = SoundManager.Instance.PlayLoopSound(SoundType.SFX_FOOTSTEP);
         mob.Anim.SetBool("move",true);
-        mob.transform.DOMoveZ(edgeZ, 0.5f).OnComplete(() =>
-        {
-            SoundManager.Instance.PauseLoopSound(moveAudio);
-            stages[currentStage].slots[currentSlot].Mob = mob;
-            SortMob(currentSlot);;
-            currentSlot++;
-        });
-        stages[currentStage].groundSlots[mobPos.y].slots[mobPos.x].Mob = null;       
+        stages[currentStage].groundSlots[mobPos.y].slots[mobPos.x].Mob = null;
+        stages[currentStage].mobs.Remove(mob);
+        mob.MoveToEdge(edgeZ);
+        StartCoroutine(Cor_MoveMob(mob));
+    }
+
+    IEnumerator Cor_MoveMob(Mob mob)
+    {
+        yield return new WaitForSeconds(0.5f);
+        stages[currentStage].slots[currentSlot].Mob = mob;
+        SortMob(currentSlot); ;
+        currentSlot++;
     }
 
     void SortMob(int currentSlot)
@@ -263,7 +300,7 @@ public class LevelController : MonoBehaviour
             return;
         }
         Camera.main.transform.DOMoveX(stages[currentStage].cameraPosX, 0.5f).SetEase(Ease.OutBack);
-        
+        CreateGrid();
     }
 
     void Lose()
