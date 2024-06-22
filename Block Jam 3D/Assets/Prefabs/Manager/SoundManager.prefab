@@ -2110,6 +2110,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   path: SO Sound
   soundInfo:
+  - {fileID: 11400000, guid: 01ab3f55027029441baeb106c9877bc3, type: 2}
+  - {fileID: 11400000, guid: b483f8be2f9eb0b48aa724cbc8d4a9fc, type: 2}
   - {fileID: 11400000, guid: c72f4fbc91e11dd4a87ac1f895af97d5, type: 2}
   - {fileID: 11400000, guid: 441b32e72a7288e4fbf19e2ba6193a4c, type: 2}
   - {fileID: 11400000, guid: 77fe5a0c0a1d3da44aa9962901ada73d, type: 2}

@@ -89,7 +89,11 @@ public class Mob : MonoBehaviour
         transform.DOScale(0.25f, 0.25f).OnComplete(() =>
         {
             SoundManager.Instance.PlaySound(SoundType.SFX_DISAPPEAR, 0.75f);
-            transform.DOScale(0, 0.25f).SetEase(Ease.OutFlash).OnComplete(() => Destroy(gameObject));
+            transform.DOScale(0, 0.25f).SetEase(Ease.OutFlash).OnComplete(() =>
+            {
+                Destroy(mobMat);
+                Destroy(gameObject);
+            });
         });
     }
 
