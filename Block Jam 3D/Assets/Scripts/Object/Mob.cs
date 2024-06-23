@@ -9,7 +9,7 @@ public class Mob : MonoBehaviour
     [SerializeField] Animator anim;
     [SerializeField] BoxCollider col;
     public Animator Anim => anim;
-    [SerializeField] List<MeshRenderer> parts = new List<MeshRenderer>();
+    [SerializeField] protected List<MeshRenderer> parts = new List<MeshRenderer>();
     [SerializeField] GameObject eyes;
     [SerializeField] Vector2Int pos;
     public Vector2Int Pos 
@@ -22,7 +22,7 @@ public class Mob : MonoBehaviour
     Tween moveTween;
     Coroutine corMove;
     [SerializeField] bool activate = false;
-    Material mobMat;
+    protected Material mobMat;
     [SerializeField, ReadOnly] List<Slot> path;
     public List<Slot> Path
     {
@@ -36,21 +36,21 @@ public class Mob : MonoBehaviour
         }
     }
 
-    private void Start()
+    protected virtual void Start()
     {
         SetUp();
     }
 
-    public void SetUpAfterSpawn(ColorType mobType, bool activate = true)
+    public void SetUpAfterSpawn(ColorType mobType)
     {
         colorType = mobType;
     }
 
-    void SetUp()
+    protected virtual void SetUp()
     {
         mobMat = Instantiate(LevelController.Instance.ColorConfig.ColorDict[colorType]);
         foreach (MeshRenderer part in parts)
-        part.material = mobMat;
+            part.material = mobMat;
         anim.enabled = false;
         Vector3 pos = transform.position;
         transform.position = new Vector3(pos.x, -0.36f, pos.z);

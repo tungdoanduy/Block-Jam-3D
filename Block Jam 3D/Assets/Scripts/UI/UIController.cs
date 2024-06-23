@@ -96,7 +96,7 @@ public class UIController : MonoBehaviour
         seq.Join(cloudRight.DOAnchorPosX(0, 1).SetEase(Ease.Linear));
         seq.Play().OnComplete(() => StartCoroutine(Cor_WaitForLoadScene(sceneName)));
     }
-    IEnumerator Cor_WaitForLoadScene(string sceneName)
+    protected virtual IEnumerator Cor_WaitForLoadScene(string sceneName)
     {
         yield return new WaitForSeconds(0.5f);
         SceneManager.LoadScene(sceneName);

@@ -1,5 +1,7 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class UIMenu : UIController
 {
@@ -19,6 +21,13 @@ public class UIMenu : UIController
     public void LoadLevel(string sceneName)
     {
         LoadScene(sceneName);
+    }
+
+    protected override IEnumerator Cor_WaitForLoadScene(string sceneName)
+    {
+        yield return new WaitForSeconds(0.5f);
+        MobMenuSpawner.Instance.ClearMat();
+        SceneManager.LoadScene(sceneName);
     }
 
     protected override void Start()
