@@ -21120,10 +21120,18 @@ PrefabInstance:
       propertyPath: nextLevel
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 5746597237794360444, guid: 9cc11760e55e65b4fb53fc56dd0cdc7b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6352590800189881969, guid: 9cc11760e55e65b4fb53fc56dd0cdc7b, type: 3}
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 963194227}
+    - target: {fileID: 6466542830467098257, guid: 9cc11760e55e65b4fb53fc56dd0cdc7b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8151318186488604370, guid: 9cc11760e55e65b4fb53fc56dd0cdc7b, type: 3}
       propertyPath: m_Pivot.x
       value: 0

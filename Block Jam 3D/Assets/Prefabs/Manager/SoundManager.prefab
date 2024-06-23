@@ -2119,6 +2119,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: de961c68167d1a44cb4a3468760a7353, type: 2}
   - {fileID: 11400000, guid: e7622541ed6d17b4fadc10fd19368e06, type: 2}
   - {fileID: 11400000, guid: c5603798a62704742a1c7627ffcd1d6c, type: 2}
+  - {fileID: 11400000, guid: e4f6a6d1ca5915143a70e04375de57f0, type: 2}
   sounds:
   - {fileID: 55372862828816255}
   - {fileID: 5169426148966678819}

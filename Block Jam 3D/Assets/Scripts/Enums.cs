@@ -29,5 +29,5 @@ public enum SoundType
     SFX_LOSE,
     SFX_WIN,
     SFX_DISAPPEAR,
-
+    SFX_EXPLOSION,
 }

@@ -16,6 +16,7 @@ public class UIController : MonoBehaviour
     [SerializeField] int nextLevel;
     [SerializeField] Transform nextButton,retryButton,homeButton;
     [SerializeField] protected LevelConfig levelConfig;
+    [SerializeField] List<Animator> fireworks = new List<Animator>();
 
     //[SerializeField] List<Sprite> clouds = new List<Sprite>();
     //[SerializeField] int num;
@@ -119,12 +120,24 @@ public class UIController : MonoBehaviour
 
     public void Victory()
     {
-        SoundManager.Instance.PlaySound(SoundType.SFX_WIN);
+        StartCoroutine(Cor_Victory());
+    }
+
+    IEnumerator Cor_Victory()
+    {
+        bg.raycastTarget = true;
         levelConfig.LevelUnlocked = nextLevel;
         endLevelText.text = SceneManager.GetActiveScene().name.ToUpper() + " PASSED";
+        foreach (Animator firework in fireworks)
+        {
+            firework.enabled = true;
+            firework.Play("Firework", 0);
+            SoundManager.Instance.PlaySound(SoundType.SFX_EXPLOSION);
+            yield return new WaitForSeconds(0.1f);
+        }        
+        SoundManager.Instance.PlaySound(SoundType.SFX_WIN);
         endLevelText.transform.DOScale(1, 0.5f).SetEase(Ease.OutBack);
         nextButton.DOScale(1, 0.5f).SetEase(Ease.OutBack);
-        bg.raycastTarget = true;
         bg.DOFade(150f / 255, 0.25f);
     }
 
