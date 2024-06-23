@@ -17,7 +17,7 @@ public class Node
         else
         {
             this.slot = slot;
-            if (slot.Mob != null)
+            if (slot.Mob != null || slot.Tunnel != null)
                 walkable = false;
         }
         this.x = x;

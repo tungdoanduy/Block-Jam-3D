@@ -76,25 +76,63 @@ public class Mob : MonoBehaviour
     {
         SoundManager.Instance.PlaySound(SoundType.SFX_FOOTSTEP, 0.5f);
         anim.SetBool("move", true);
+        StartCoroutine(Cor_MoveToEdge(edgeZ));
+        //float durationPerSlot = 0.5f / (path.Count + 1);
+        //Sequence seq = DOTween.Sequence();
+        //bool down = true;
+        //foreach (Slot slot in path)
+        //{
+        //    Vector3 destination = slot.transform.position;
+        //    float angle = Vector3.Angle(destination - transform.position, down? new Vector3(0, 0, -1) : new Vector3(1,0,0));
+        //    print(angle);
+        //    if (angle > 80)// i mean for square angle
+        //    {
+        //        down = !down;
+        //        if (destination.x > transform.position.x)
+        //            angle *= -1;
+        //        seq.Append(transform.DORotate(new Vector3(0, angle, 0), durationPerSlot * 0.2f).SetEase(Ease.OutFlash));
+        //        seq.Append(transform.DOMove(destination, durationPerSlot * 0.8f).SetEase(Ease.Linear));
+        //    }
+        //    else
+        //        seq.Append(transform.DOMove(destination, durationPerSlot).SetEase(Ease.Linear));
+
+        //}
+        //seq.Append(transform.DOMoveZ(edgeZ, durationPerSlot)).SetEase(Ease.Linear);
+        //seq.Play();
+    }
+
+    IEnumerator Cor_MoveToEdge(float edgeZ)
+    {
         float durationPerSlot = 0.5f / (path.Count + 1);
-        Sequence seq = DOTween.Sequence();
+        bool down = true;
         foreach (Slot slot in path)
         {
             Vector3 destination = slot.transform.position;
-            float angle = Vector3.Angle(destination - transform.position, new Vector3(0, 0, -1));
-            if (angle > 80)// i mean for square angle
+            if (Mathf.Abs(destination.x - transform.position.x) > 0.5f && down)
             {
+                down = false;
                 if (destination.x > transform.position.x)
-                    angle *= -1;
-                seq.Append(transform.DORotate(new Vector3(0, angle, 0), durationPerSlot * 0.2f).SetEase(Ease.OutFlash));
-                seq.Append(transform.DOMove(destination, durationPerSlot * 0.8f).SetEase(Ease.Linear));
+                    transform.DORotate(new Vector3(0, -90, 0), durationPerSlot * 0.2f).SetEase(Ease.OutFlash);
+                else
+                    transform.DORotate(new Vector3(0, 90, 0), durationPerSlot * 0.2f).SetEase(Ease.OutFlash);
+                yield return new WaitForSeconds(durationPerSlot * 0.2f);
+                transform.DOMove(destination, durationPerSlot * 0.8f).SetEase(Ease.Linear);
+                yield return new WaitForSeconds(durationPerSlot * 0.8f);
+                continue;
             }
-            else
-                seq.Append(transform.DOMove(destination, durationPerSlot).SetEase(Ease.Linear));
-
+            if (Mathf.Abs(destination.z - transform.position.z) > 0.5f && !down)
+            {
+                down = true;
+                transform.DORotate(new Vector3(0, 0, 0), durationPerSlot * 0.2f).SetEase(Ease.OutFlash);
+                yield return new WaitForSeconds(durationPerSlot * 0.2f);
+                transform.DOMove(destination, durationPerSlot * 0.8f).SetEase(Ease.Linear);
+                yield return new WaitForSeconds(durationPerSlot * 0.8f);
+                continue;
+            }
+            transform.DOMove(destination, durationPerSlot).SetEase(Ease.Linear);
+            yield return new WaitForSeconds(durationPerSlot);
         }
-        seq.Append(transform.DOMoveZ(edgeZ, durationPerSlot)).SetEase(Ease.Linear);
-        seq.Play();
+        transform.DOMoveZ(edgeZ, durationPerSlot).SetEase(Ease.Linear);
     }
 
     public void Move(Vector3 destination)
@@ -106,7 +144,7 @@ public class Mob : MonoBehaviour
     IEnumerator Cor_Move(Vector3 destination)
     {
         anim.SetBool("move", true);
-        SoundManager.Instance.PlaySound(SoundType.SFX_FOOTSTEP, 0.5f);
+        
         float angle = Vector3.Angle(destination - transform.position, new Vector3(0, 0, -1));
         if (destination.x > transform.position.x)
             angle *= -1;

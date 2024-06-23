@@ -256,12 +256,14 @@ public class LevelController : MonoBehaviour
                     stages[currentStage].slots[j].Mob.Move(new Vector3(stages[currentStage].slots[j + 1].transform.position.x, 0.06f, stages[currentStage].slots[j + 1].transform.position.z));
                     stages[currentStage].slots[j + 1].Mob = stages[currentStage].slots[j].Mob;
                 }
+                SoundManager.Instance.PlaySound(SoundType.SFX_FOOTSTEP, 0.5f);
                 tempMob.Move(new Vector3(stages[currentStage].slots[i+1].transform.position.x, 0.06f, stages[currentStage].slots[i+1].transform.position.z));
                 stages[currentStage].slots[i+1].Mob = tempMob;
                 StartCoroutine(Cor_Connect(i + 1));
                 return;
             }
         }
+        SoundManager.Instance.PlaySound(SoundType.SFX_FOOTSTEP, 0.5f);
         stages[currentStage].slots[currentSlot].Mob.Move(new Vector3(stages[currentStage].slots[currentSlot].transform.position.x, 0.06f, stages[currentStage].slots[currentSlot].transform.position.z));
         StartCoroutine(Cor_Connect(currentSlot));
     }
@@ -271,6 +273,7 @@ public class LevelController : MonoBehaviour
         if (currentSlot>=2 && stages[currentStage].slots[currentSlot-1].Mob.ColorType == stages[currentStage].slots[currentSlot].Mob.ColorType && stages[currentStage].slots[currentSlot - 2].Mob.ColorType == stages[currentStage].slots[currentSlot].Mob.ColorType)
         {
             Mob mob1 = stages[currentStage].slots[currentSlot - 2].Mob, mob2 = stages[currentStage].slots[currentSlot - 1].Mob, mob3 = stages[currentStage].slots[currentSlot].Mob;
+            SoundManager.Instance.PlaySound(SoundType.SFX_FOOTSTEP, 0.5f);
             for (int i = currentSlot + 1; i <= this.currentSlot; i++)
             {
                 if (stages[currentStage].slots[i].Mob == null)
