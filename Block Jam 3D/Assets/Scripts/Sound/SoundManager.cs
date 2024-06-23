@@ -108,18 +108,37 @@ public class SoundManager : MonoBehaviour
         sound.gameObject.SetActive(false);
         sounds.Add(sound);
     }
-    public AudioSource PlayLoopSound(SoundType soundType)
+    public bool SetLoopSound(SoundType soundType, out AudioSource source, float volume = 1)
     {
         AudioClip audio = GetSoundInfo(soundType);
         if (audio == null || sounds.Count == 0)
-            return null;
+        {
+            source = null;
+            return false;
+        }
         AudioSource sound = sounds[0];
         sounds.RemoveAt(0);
         sound.gameObject.SetActive(true);
         sound.loop = true;
         sound.clip = audio;
-        sound.Play();
-        return sound;
+        sound.volume = volume;
+        source = sound;
+        return true;
+    }
+
+    public void PlayLoopSound(AudioSource source)
+    {
+        source.Play();
+        //AudioClip audio = GetSoundInfo(soundType);
+        //if (audio == null || sounds.Count == 0)
+        //    return null;
+        //AudioSource sound = sounds[0];
+        //sounds.RemoveAt(0);
+        //sound.gameObject.SetActive(true);
+        //sound.loop = true;
+        //sound.clip = audio;
+        //sound.Play();
+        //return sound;
     }
 
     public void PauseLoopSound(AudioSource sound)

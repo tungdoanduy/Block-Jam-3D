@@ -29,7 +29,8 @@ public class MobMenuSpawner : MonoBehaviour
 
     private void Start()
     {
-        InvokeRepeating("ActivateMob", 0, timeBetweenMob);
+        //InvokeRepeating("ActivateMob", 0, timeBetweenMob);
+        
     }
 
     [Button]
@@ -49,6 +50,13 @@ public class MobMenuSpawner : MonoBehaviour
             Transform clone = Instantiate(template, new Vector3(horizontal.x, Random.Range(vertical.x, vertical.y)),Quaternion.identity, mobMenuContainter);
             mobMenus.Add(clone.GetComponent<MobMenu>());
         }
+    }
+
+    public IEnumerator Cor_ActivateMob()
+    {
+        ActivateMob();
+        yield return new WaitForSeconds(timeBetweenMob);
+        StartCoroutine(Cor_ActivateMob());
     }
 
     void ActivateMob()

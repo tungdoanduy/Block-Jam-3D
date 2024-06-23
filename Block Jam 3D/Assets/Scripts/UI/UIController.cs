@@ -56,25 +56,46 @@ public class UIController : MonoBehaviour
             Destroy(gameObject);
     }
 
-    protected virtual void Start()
+    void Start()
     {
+        StartCoroutine(Cor_Start());
+    }
+
+    IEnumerator Cor_Start()
+    {
+        yield return new WaitUntil(() => SoundManager.Instance!=null && SaveLoadManager.Instance!=null);
+        BeforeStart();
         SoundManager.Instance.PlaySound(SoundType.SFX_TRANSITION_OUT);
-        Sequence seq = DOTween.Sequence();
-        seq.Join(cloudLeft.DOAnchorPosX(-800, 1).SetEase(Ease.Linear));
-        seq.Join(cloudRight.DOAnchorPosX(800, 1).SetEase(Ease.Linear));
-        seq.Play().OnComplete(() =>
+        AudioSource src = null;
+        yield return new WaitUntil(() =>
         {
             if (LevelController.Instance != null)
             {
-                SoundManager.Instance.PlayLoopSound(SoundType.GAMEPLAY_THEME);
-                LevelController.Instance.Interactable = true;
+                return SoundManager.Instance.SetLoopSound(SoundType.GAMEPLAY_THEME, out src);
             }
             else
             {
-                SoundManager.Instance.PlayLoopSound(SoundType.HOME_THEME);
+                return SoundManager.Instance.SetLoopSound(SoundType.HOME_THEME, out src);
             }
         });
+        Sequence seq = DOTween.Sequence();
+        seq.Join(cloudLeft.DOAnchorPosX(-800, 1).SetEase(Ease.Linear));
+        seq.Join(cloudRight.DOAnchorPosX(800, 1).SetEase(Ease.Linear));
+        seq.Play();
+        yield return seq.WaitForCompletion();
+        if (LevelController.Instance != null)
+            LevelController.Instance.Interactable = true;
+        SoundManager.Instance.PlayLoopSound(src);
+        AfterStart();
     }
+
+    protected virtual bool CheckInstance()
+    {
+        return SoundManager.Instance != null && SaveLoadManager.Instance != null && LevelController.Instance != null;
+    }
+
+    protected virtual void AfterStart() { }
+    protected virtual void BeforeStart() { }
 
     public void OpenSettingPanel()
     {

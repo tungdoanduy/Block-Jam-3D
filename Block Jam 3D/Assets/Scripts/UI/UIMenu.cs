@@ -30,13 +30,22 @@ public class UIMenu : UIController
         SceneManager.LoadScene(sceneName);
     }
 
-    protected override void Start()
+    protected override void BeforeStart()
     {
-        base.Start();
         SaveLoadManager.Instance.Load();
         for (int i = 0; i < levelConfig.LevelUnlocked; i++)
         {
             levelButtons[i].Unlocked();
         }
+    }
+
+    protected override void AfterStart()
+    {        
+        StartCoroutine(MobMenuSpawner.Instance.Cor_ActivateMob());
+    }
+
+    protected override bool CheckInstance()
+    {
+        return SoundManager.Instance != null && SaveLoadManager.Instance != null;
     }
 }
