@@ -101,8 +101,9 @@ public class LevelController : MonoBehaviour
 
     private void Update()
     {
-        if (interactable)
-            Click();
+        if (!interactable)
+            return;
+        Click();
     }
 
     void SetUpObject()

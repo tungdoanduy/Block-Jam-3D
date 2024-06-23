@@ -65,6 +65,7 @@ public class UIController : MonoBehaviour
     {
         yield return new WaitUntil(() => SoundManager.Instance!=null && SaveLoadManager.Instance!=null);
         BeforeStart();
+        yield return new WaitForSeconds(0.25f);
         SoundManager.Instance.PlaySound(SoundType.SFX_TRANSITION_OUT);
         AudioSource src = null;
         yield return new WaitUntil(() =>
@@ -83,8 +84,6 @@ public class UIController : MonoBehaviour
         seq.Join(cloudRight.DOAnchorPosX(800, 1).SetEase(Ease.Linear));
         seq.Play();
         yield return seq.WaitForCompletion();
-        if (LevelController.Instance != null)
-            LevelController.Instance.Interactable = true;
         SoundManager.Instance.PlayLoopSound(src);
         AfterStart();
     }
@@ -94,7 +93,7 @@ public class UIController : MonoBehaviour
         return SoundManager.Instance != null && SaveLoadManager.Instance != null && LevelController.Instance != null;
     }
 
-    protected virtual void AfterStart() { }
+    protected virtual void AfterStart() { LevelController.Instance.Interactable = true; }
     protected virtual void BeforeStart() { }
 
     public void OpenSettingPanel()
@@ -120,7 +119,7 @@ public class UIController : MonoBehaviour
     }
     protected virtual IEnumerator Cor_WaitForLoadScene(string sceneName)
     {
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.25f);
         SceneManager.LoadScene(sceneName);
     }
 
@@ -153,7 +152,7 @@ public class UIController : MonoBehaviour
         {
             firework.enabled = true;
             firework.Play("Firework", 0);
-            SoundManager.Instance.PlaySound(SoundType.SFX_EXPLOSION);
+            SoundManager.Instance.PlaySound(SoundType.SFX_EXPLOSION, 0.5f);
             yield return new WaitForSeconds(0.1f);
         }        
         SoundManager.Instance.PlaySound(SoundType.SFX_WIN);

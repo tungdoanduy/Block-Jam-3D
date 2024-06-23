@@ -25,8 +25,8 @@ public class UIMenu : UIController
 
     protected override IEnumerator Cor_WaitForLoadScene(string sceneName)
     {
-        yield return new WaitForSeconds(0.5f);
         MobMenuSpawner.Instance.ClearMat();
+        yield return new WaitForSeconds(0.25f);
         SceneManager.LoadScene(sceneName);
     }
 
